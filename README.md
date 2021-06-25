@@ -1,7 +1,7 @@
 # Patchy_Apache
 
-Example Idea:
+#Write a script that patches the vulnerabilities and demonstrate it in action.
 
-Set up a web server using Apache that runs PHP.  
-Research and demonstrate vulnerabilities in Apache/PHP.  
-Write a script that patches the vulnerabilities and demonstrate it in action.
+Psudo Code:
+
+Basic concept -> given a known vulnerability, recreate the "apt" command to update and patch the system.  
