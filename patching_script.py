@@ -10,7 +10,7 @@ from scapy.all import *
 #explore further patching options
 
 
-###executes the bash command "apache2 -v" and formats the responce 
+###executes the bash command "apache2 -v" and formats the response 
 def check_current_version(): 
     installed_apache_version=subprocess.run(["apache2", "-v"], stdout=subprocess.PIPE, text=True)
     formatted_installed_version=""
@@ -21,7 +21,7 @@ def check_current_version():
     return formatted_installed_version
 
 
-###pulls the current release version from the publisher's page and formats the responce
+###pulls the current release version from the publisher's page and formats the response
 def check_newest_version():
     pulling_newest_version=urllib.request.urlopen("https://httpd.apache.org/download.cgi")
     read_url=pulling_newest_version.read()
