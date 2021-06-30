@@ -13,8 +13,21 @@ def check_current_version():
 
 def check_newest_version():
     newest_apache_version=urllib.request.urlopen("https://httpd.apache.org/download.cgi")
-
-    print("Result code: " + str(newest_apache_version.getcode()))
+    read_url=newest_apache_version.read()
+    split_url=read_url.split()
+    line_counter=0
+    for line in split_url:
+        line_counter+=1
+        if line_counter==461:
+            new_version=line.decode("utf-8")
+        if line_counter==463:
+            build_date=line.decode("utf-8")
+            #print(line_counter,line)
+    server_version=("Server version: A"+new_version[8:13]+"/"+new_version[17:23])
+    server_build_date=("Server built:   "+build_date[:10])
+    print(server_version + '\n' + server_build_date)
+    #print("Result code: " + str(newest_apache_version.getcode()))
+    #print(read_url)
     return newest_apache_version
 
 def version_comparison():    
@@ -31,9 +44,7 @@ def update_current_version():
 
 
 if __name__=="__main__":
-    print(check_current_version())
+    print(check_current_version().strip())
     check_newest_version()
     #if version_comparison()==False:
     #    update_current_version()
-
-                           
