@@ -22,5 +22,7 @@ def version_comparison()
 
 
 if __name__=="__main__":
-    quick_patch()
+    check_current_version()
+    check_newest_version()
+    version_comparison()
                      
