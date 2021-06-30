@@ -2,43 +2,54 @@
 import sys, subprocess, urllib.request
 from scapy.all import * 
 
-#Psudo code for now?
-#use argparse to get config file locations and IP addresses and such
-#check the host machine for current version of Apache
-#check the Apache for vulnerabilities
-#check for the current version of Apache: https://httpd.apache.org/download.cgi
-def check_current_version():
+#code parts remaining:
+#optional: use argparse to get config file locations and IP addresses and such
+#check the Apache web server for vulnerabilities
+#update to the current verison 
+#AND/OR
+#explore further patching options
+
+
+###executes the bash command "apache2 -v" and formats the responce 
+def check_current_version(): 
     installed_apache_version=subprocess.run(["apache2", "-v"], stdout=subprocess.PIPE, text=True)
     formatted_installed_version=""
+    ###creating the formatted_installed_version string
     for character in installed_apache_version.stdout:
         formatted_installed_version+=character
     formatted_installed_version=formatted_installed_version[:29]
     return formatted_installed_version
 
+
+###pulls the current release version from the publisher's page and formats the responce
 def check_newest_version():
-    getting_newest_version=urllib.request.urlopen("https://httpd.apache.org/download.cgi")
-    read_url=getting_newest_version.read()
+    pulling_newest_version=urllib.request.urlopen("https://httpd.apache.org/download.cgi")
+    read_url=pulling_newest_version.read()
     split_url=read_url.split()
     line_counter=0
+    ###creating the formatted_newest_version string
     for line in split_url:
         line_counter+=1
-        if line_counter==461:
+        if line_counter==461: 
+            ###changing encoding from bytes (b') to utf-8
             new_version=line.decode("utf-8")
-    newest_server_version=("Server version: A"+new_version[8:13]+"/"+new_version[17:23])
-    return newest_server_version
+            formatted_newest_version=("Server version: A"+new_version[8:13]+"/"+new_version[17:23])
+    return formatted_newest_version
 
-def version_comparison(installed_apache_version,newest_apache_version):    
+
+###compares the installed version to the current release version.
+def version_comparison(installed_apache_version,newest_apache_version): 
     if installed_apache_version!=newest_apache_version:
         print("You do not have the current version of Apache!")
         return False
     else:
         print("You have the current verion of Apache installed.")
         return True
-
+###updates the current installed version to the current release version
 def update_current_version():
     print("This section is still under development")
 
-
+###main control function
 if __name__=="__main__":
     #print(check_current_version().strip())
     #print(check_newest_version().strip())
