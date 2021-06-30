@@ -32,7 +32,7 @@ def update_current_version():
 
 if __name__=="__main__":
     print(check_current_version())
-    print(check_newest_version())
+    check_newest_version()
     #if version_comparison()==False:
     #    update_current_version()
 
