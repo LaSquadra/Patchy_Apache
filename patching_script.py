@@ -10,7 +10,7 @@ from scapy.all import *
 #explore further patching options
 
 
-###executes the bash command "apache2 -v" and formats the response 
+###executes the bash command "apache2 -v" and formats the response
 def check_current_version(): 
     installed_apache_version=subprocess.run(["apache2", "-v"], stdout=subprocess.PIPE, text=True)
     formatted_installed_version=""
@@ -47,14 +47,18 @@ def version_comparison(installed_apache_version,newest_apache_version):
         return True
 ###updates the current installed version to the current release version
 def update_current_version():
-    print("This section is still under development")
+    print("The updating section is still under development.")
 
 ###main control function
 if __name__=="__main__":
     #print(check_current_version().strip())
     #print(check_newest_version().strip())
-    version_comparison(check_current_version(), check_newest_version())
-    #if version_comparison()==False:
-    #     update_current_version()
-    #else:
-    #    print("You are running the newest version of Apache.)
+    if version_comparison(check_current_version(), check_newest_version())==False:
+        update_choice=input("Would you like to update to the current release version of Apache? (Y/n) ")
+        ###update_choice does not correctly evaluate the input <--still needs work.
+        if update_choice.lower()=="yes" or "y":
+            update_current_version()
+        else: 
+            print("Alternate patching options are currently under development")
+    else:
+        print("You are running the newest version of Apache.")
