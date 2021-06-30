@@ -1,7 +1,6 @@
-# Patchy_Apache
+Patchy_Apache:
 
-#Write a script that patches the vulnerabilities and demonstrate it in action.
+Project goal: Write a script that patches the vulnerabilities and demonstrate it in action.
 
-Psudo Code:
-
-Basic concept -> given a known vulnerability, recreate the "apt" command to update and patch the system.  
+Basic concept -> given a known vulnerability, recreate the "apt" command to update the apache web server.
+Time allowing, develop other methods of patching that the user can choose fom within the program. 
