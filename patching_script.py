@@ -1,5 +1,5 @@
-! /usr/bin/python3
-import sys, subprocess
+#! /usr/bin/python3
+import sys, subprocess, urllib.request
 from scapy.all import * 
 
 #Psudo code for now?
@@ -8,11 +8,15 @@ from scapy.all import *
 #check the Apache for vulnerabilities
 #check for the current version of Apache: https://httpd.apache.org/download.cgi
 def check_current_version():
-    installed_apache_version=subprocess.run("apache2 -v")
-    newest_apache_version="Server version: Apache/2.4.46 (Debian)"
-def check_newest_version()
-    
-def version_comparison()    
+    installed_apache_version=subprocess.run(["apache2", "-v"])
+    return installed_apache_version
+
+def check_newest_version():
+    newest_apache_version=urllib.request.urlopen("https://httpd.apache.org/download.cgi")
+    return newest_apache_version
+    print("Result code: " + str(newest_apache_version.getcode()))
+
+def version_comparison():    
     if installed_apache_version!=newest_apache_version:
         print(installed_apache_version)
         print("You do not have the current version of Apache!")
@@ -24,5 +28,5 @@ def version_comparison()
 if __name__=="__main__":
     check_current_version()
     check_newest_version()
-    version_comparison()
-                     
+    #version_comparison()
+                           
