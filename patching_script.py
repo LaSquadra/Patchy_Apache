@@ -13,8 +13,8 @@ def check_current_version():
 
 def check_newest_version():
     newest_apache_version=urllib.request.urlopen("https://httpd.apache.org/download.cgi")
-    return newest_apache_version
     print("Result code: " + str(newest_apache_version.getcode()))
+    return newest_apache_version
 
 def version_comparison():    
     if installed_apache_version!=newest_apache_version:
