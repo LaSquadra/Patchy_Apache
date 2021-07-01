@@ -10,6 +10,19 @@ from scapy.all import *
 #explore further patching options
 
 
+def vulnerability_check():
+    print("This section checks the Apache web server for vulnerabilities.")
+    web_server_url=input("What is the IP of the webserver you are trying to scan? ")
+    print("Note: This may take a few minutes.")
+    nikto_scan=subprocess.run(["nikto" , "-h", web_server_url, "-Display", "3", "-ask", "no"], stdout=subprocess.PIPE, text=True)
+    print("Scan Complete")
+    useable_nikto_scan_result=""
+    for text in nikto_scan.stdout:
+        useable_nikto_scan_result+=text
+    print(useable_nikto_scan_result)
+    return useable_nikto_scan_result
+
+
 ###executes the bash command "apache2 -v" and formats the response
 def check_current_version(): 
     installed_apache_version=subprocess.run(["apache2", "-v"], stdout=subprocess.PIPE, text=True)
@@ -51,13 +64,14 @@ def update_current_version():
 
 ###main control function
 if __name__=="__main__":
-    #print(check_current_version().strip())
+    vulnerability_check()
+    print(check_current_version().strip())
     #print(check_newest_version().strip())
-    if version_comparison(check_current_version(), check_newest_version())==False:
-        update_choice=input("Would you like to update to the current release version of Apache? (Y/n) ")
+#    if version_comparison(check_current_version(), check_newest_version())==False:
+#        update_choice=input("Would you like to update to the current release version of Apache? (Y/n) ")
         ###update_choice does not correctly evaluate the input <--still needs work.
-        print(update_choice)
-        if update_choice.lower()=="yes" or update_choice.lower()=="y":
-            update_current_version()
-        else: 
-            print("Alternate patching options are currently under development")
+#        if update_choice.lower()=="yes" or update_choice.lower()=="y":
+#            update_current_version()
+#        else: 
+#            print("Alternate patching options are currently under development")
+
