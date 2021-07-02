@@ -16,10 +16,10 @@ def ssh_initiation():
 
 ###conducts a Nikto scan on the user-specified server
 def vulnerability_check():
-    print("This section checks the Apache web server for vulnerabilities. \n")
+    print("This section checks the Apache web server for vulnerabilities.\n")
     web_server_url=input("What is the IP of the webserver you are trying to scan? ")
     print("Note: This may take a few minutes.")
-    nikto_scan=subprocess.run(["nikto" , "-h", web_server_url, "-Display", "3", "-ask", "no"], stdout=subprocess.PIPE, text=True)
+    nikto_scan=subprocess.run(["nikto","-h",web_server_url,"-Display","3","-ask","no"],stdout=subprocess.PIPE,text=True)
     print("Scan Complete")
     useable_nikto_scan_result=""
     for text in nikto_scan.stdout:
@@ -30,7 +30,7 @@ def vulnerability_check():
 
 ###executes the bash command "apache2 -v" and formats the response
 def check_current_version(): 
-    installed_apache_version=subprocess.run(["apache2", "-v"], stdout=subprocess.PIPE, text=True)
+    installed_apache_version=subprocess.run(["apache2", "-v"],stdout=subprocess.PIPE,text=True)
     formatted_installed_version=""
     ###creating the formatted_installed_version string
     for character in installed_apache_version.stdout:
@@ -70,19 +70,33 @@ def update_current_version():
     backup_conf=subprocess.run(["sudo", "cp", "/etc/apache2/apache2.conf", "/etc/apache2/apache2-backup.conf"])
     #create_update_repository=subprocess.run(["sudo","add-apt-repository","ppa:ondreja/apache2"])
     update_repository=subprocess.run(["sudo","apt-get","update"])
-    upgrading_distribution=subprocess.run(["sudo","apt-get","upgrade"])
+    upgrading_serices=subprocess.run(["sudo","apt-get","upgrade"])
     print("Updating has completed")
     return backup_conf
 
 ###applying patches to the Apache server
 def applying_patches(apache2_conf_file):
     backup_conf=subprocess.run(["sudo","cp","/etc/apache2/apache2.conf", "/etc/apache2/apache2-backup.conf"])
-    chunked_conf_file=[]
-    for line in apache2_conf_file:
-        print("Applying Patches is still under construction.")
-        break
+    config_patch_text="ServerTokens Prod\n ServerSignature Off\n\n <Directory /opt/apache2/apache2>\n Options -Indexes\n </Directory>"
+    conf_file=""
+    line_count=0
+    for character in apache2_conf_file:
+        conf_file+=character
+    chunked_conf_file=conf_file.split("\n")
+    for line in chunked_conf_file:
+        line_count+=1
+        #print(line_count,line)
+    #chunked_conf_file.append(config_patch_text)
+    print("Patch Applied")
+    restart_prompt=input("Apache will need to be restarted for changes to take effect.  Restart now? (Y/n) ")
+    if restart_prompt.lower()=="yes" or restart_prompt.lower()=="y":
+        restart_apache=subprocess.run(["sudo","systemctl","restart","apache2"],stdout=subprocess.PIPE,text=True)
+        print("Apache has been reset.")
+    
+    #print(chunked_conf_file)
+    
     #create_patch_file=subprocess.run(["sudo","cp","/etc/apache2/"
-    #print("The patching section is still under development.")
+    print("The patching section is still under development.")
 
 
 ###main control function
