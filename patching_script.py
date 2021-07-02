@@ -9,9 +9,14 @@ from scapy.all import *
 #AND/OR
 #explore further patching options
 
+
+###SSH into a machine
+def ssh_initiation():
+    print("SSH is still a work in progress")
+
 ###conducts a Nikto scan on the user-specified server
 def vulnerability_check():
-    print("This section checks the Apache web server for vulnerabilities.")
+    print("This section checks the Apache web server for vulnerabilities. \n")
     web_server_url=input("What is the IP of the webserver you are trying to scan? ")
     print("Note: This may take a few minutes.")
     nikto_scan=subprocess.run(["nikto" , "-h", web_server_url, "-Display", "3", "-ask", "no"], stdout=subprocess.PIPE, text=True)
@@ -58,13 +63,24 @@ def version_comparison(installed_apache_version,newest_apache_version):
     else:
         print("You have the current verion of Apache installed.")
         return True
+
+
 ###updates the current installed version to the current release version
 def update_current_version():
-    print("The updating section is still under development.")
+    backup_conf=subprocess.run(["sudo", "cp", "etc/apache2/apache2.conf", "/etc/apache2/apache2-backup.conf"])
+    create_update_repository=subprocess.run(["sudo","apt-add-repository","ppa:ondreja/apache2"])
+    update_repository=subprocess.run(["sudo","apt-get","update"])
+    upgrading_distribution=subprocess.run(["sudo","apt-get","dist-upgrade"])
+    print("Updating has completed")
+
+###applying patches to the Apache server
+def applying_patches():
+
+    print("The patching section is still under development.")
+
 
 ###main control function
 if __name__=="__main__":
-    vulnerability_check()
     #print(check_current_version().strip())
     #print(check_newest_version().strip())
     if version_comparison(check_current_version(), check_newest_version())==False:
@@ -74,4 +90,4 @@ if __name__=="__main__":
             update_current_version()
         else: 
             print("Alternate patching options are currently under development")
-
+    vulnerability_check()
