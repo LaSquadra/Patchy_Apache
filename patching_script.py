@@ -67,27 +67,35 @@ def version_comparison(installed_apache_version,newest_apache_version):
 
 ###updates the current installed version to the current release version
 def update_current_version():
-    backup_conf=subprocess.run(["sudo", "cp", "etc/apache2/apache2.conf", "/etc/apache2/apache2-backup.conf"])
-    create_update_repository=subprocess.run(["sudo","apt-add-repository","ppa:ondreja/apache2"])
+    backup_conf=subprocess.run(["sudo", "cp", "/etc/apache2/apache2.conf", "/etc/apache2/apache2-backup.conf"])
+    #create_update_repository=subprocess.run(["sudo","add-apt-repository","ppa:ondreja/apache2"])
     update_repository=subprocess.run(["sudo","apt-get","update"])
-    upgrading_distribution=subprocess.run(["sudo","apt-get","dist-upgrade"])
+    upgrading_distribution=subprocess.run(["sudo","apt-get","upgrade"])
     print("Updating has completed")
+    return backup_conf
 
 ###applying patches to the Apache server
-def applying_patches():
-
-    print("The patching section is still under development.")
+def applying_patches(apache2_conf_file):
+    backup_conf=subprocess.run(["sudo","cp","/etc/apache2/apache2.conf", "/etc/apache2/apache2-backup.conf"])
+    chunked_conf_file=[]
+    for line in apache2_conf_file:
+        print("Applying Patches is still under construction.")
+        break
+    #create_patch_file=subprocess.run(["sudo","cp","/etc/apache2/"
+    #print("The patching section is still under development.")
 
 
 ###main control function
 if __name__=="__main__":
     #print(check_current_version().strip())
     #print(check_newest_version().strip())
-    if version_comparison(check_current_version(), check_newest_version())==False:
-        update_choice=input("Would you like to update to the current release version of Apache? (Y/n) ")
+#    if version_comparison(check_current_version(), check_newest_version())==False:
+#        update_choice=input("Would you like to update to the current release version of Apache? (Y/n) ")
         ###update_choice does not correctly evaluate the input <--still needs work.
-        if update_choice.lower()=="yes" or update_choice.lower()=="y":
-            update_current_version()
-        else: 
-            print("Alternate patching options are currently under development")
-    vulnerability_check()
+#        if update_choice.lower()=="yes" or update_choice.lower()=="y":
+#            update_current_version()
+#        else: 
+#            print("Alternate patching options are currently under development")
+#    vulnerability_check()
+    with open(sys.argv[1],"r") as apache2_conf_file:
+        applying_patches(apache2_conf_file)
