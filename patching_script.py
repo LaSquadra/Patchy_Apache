@@ -4,10 +4,6 @@ from scapy.all import *
 
 #code parts remaining:
 #optional: use argparse to get config file locations and IP addresses and such
-#check the Apache web server for vulnerabilities
-#update to the current verison 
-#AND/OR
-#explore further patching options
 
 
 ###SSH into a machine
@@ -15,11 +11,10 @@ def ssh_initiation():
     print("SSH is still a work in progress")
 
 ###conducts a Nikto scan on the user-specified server
-def vulnerability_check():
-    print("This section checks the Apache web server for vulnerabilities. \n")
-    web_server_url=input("What is the IP of the webserver you are trying to scan? ")
+def vulnerability_check(web_server_url):
+    #print("This section checks the Apache web server for vulnerabilities.\n")
     print("Note: This may take a few minutes.")
-    nikto_scan=subprocess.run(["nikto" , "-h", web_server_url, "-Display", "3", "-ask", "no"], stdout=subprocess.PIPE, text=True)
+    nikto_scan=subprocess.run(["nikto","-h",web_server_url,"-Display","3","-ask","no"],stdout=subprocess.PIPE,text=True)
     print("Scan Complete")
     useable_nikto_scan_result=""
     for text in nikto_scan.stdout:
@@ -30,7 +25,7 @@ def vulnerability_check():
 
 ###executes the bash command "apache2 -v" and formats the response
 def check_current_version(): 
-    installed_apache_version=subprocess.run(["apache2", "-v"], stdout=subprocess.PIPE, text=True)
+    installed_apache_version=subprocess.run(["apache2", "-v"],stdout=subprocess.PIPE,text=True)
     formatted_installed_version=""
     ###creating the formatted_installed_version string
     for character in installed_apache_version.stdout:
@@ -39,7 +34,7 @@ def check_current_version():
     return formatted_installed_version
 
 
-###pulls the current release version from the publisher's page and formats the response
+###pulls the current in-release version from the publisher's page and formats the response
 def check_newest_version():
     pulling_newest_version=urllib.request.urlopen("https://httpd.apache.org/download.cgi")
     read_url=pulling_newest_version.read()
@@ -67,26 +62,41 @@ def version_comparison(installed_apache_version,newest_apache_version):
 
 ###updates the current installed version to the current release version
 def update_current_version():
-    backup_conf=subprocess.run(["sudo", "cp", "etc/apache2/apache2.conf", "/etc/apache2/apache2-backup.conf"])
-    create_update_repository=subprocess.run(["sudo","apt-add-repository","ppa:ondreja/apache2"])
+    backup_conf=subprocess.run(["sudo", "cp", "/etc/apache2/apache2.conf", "/etc/apache2/apache2-backup.conf"])
+    #create_update_repository=subprocess.run(["sudo","add-apt-repository","ppa:ondreja/apache2"])
     update_repository=subprocess.run(["sudo","apt-get","update"])
-    upgrading_distribution=subprocess.run(["sudo","apt-get","dist-upgrade"])
+    upgrading_serices=subprocess.run(["sudo","apt-get","upgrade"])
     print("Updating has completed")
+    return backup_conf
 
 ###applying patches to the Apache server
-def applying_patches():
-
-    print("The patching section is still under development.")
+def applying_patches(apache2_conf_file,restart_prompt):
+    backup_conf=subprocess.run(["sudo","cp","/etc/apache2/apache2.conf", "/etc/apache2/apache2-backup.conf"])
+    config_patch_text="ServerTokens Prod\nServerSignature Off\n\n<Directory /opt/apache2/apache2>\nOptions -Indexes\n</Directory>\n\nFileETag None\n\nTraceEnable off\n\nTimeout 60"
+    with open(sys.argv[1],"a+") as config_file:
+        config_file.write(config_patch_text)
+    print("Patch Applied")
+    if restart_prompt.lower()=="yes" or restart_prompt.lower()=="y":
+        restart_apache=subprocess.run(["sudo","systemctl","restart","apache2"],stdout=subprocess.PIPE,text=True)
+        print("Apache has been reset.")
 
 
 ###main control function
 if __name__=="__main__":
-    #print(check_current_version().strip())
-    #print(check_newest_version().strip())
+    update_choice=input("Would you like to update to the current release version of Apache? (Y/n) ")
+    vuln_check_option=input("Would you like to check for Vulnerabilities? (Y/n) ")
+    if vuln_check_option.lower()=="yes" or vuln_check_option.lower()=="y":
+        web_server_url=input("What is the IP of the webserver you are trying to scan? ") 
+    patch_option=input("Would you like to apply the optional patches? (Y/n) ")
+    if patch_option.lower()=="yes" or patch_option.lower()=="y":
+        restart_prompt=input("Apache will need to be restarted for changes to take effect.\nRestart when completed? (Y/n) ")
+    print()
     if version_comparison(check_current_version(), check_newest_version())==False:
-        update_choice=input("Would you like to update to the current release version of Apache? (Y/n) ")
         if update_choice.lower()=="yes" or update_choice.lower()=="y":
             update_current_version()
-        else: 
-            print("Alternate patching options are currently under development")
-    vulnerability_check()
+        print()
+    if vuln_check_option.lower()=="yes" or vuln_check_option.lower()=="y":
+        vulnerability_check(web_server_url)
+        print()
+    if patch_option.lower()=="yes" or patch_option.lower()=="y":
+        applying_patches(sys.argv[1],restart_prompt)
