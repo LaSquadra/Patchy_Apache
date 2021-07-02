@@ -85,7 +85,6 @@ if __name__=="__main__":
     #print(check_newest_version().strip())
     if version_comparison(check_current_version(), check_newest_version())==False:
         update_choice=input("Would you like to update to the current release version of Apache? (Y/n) ")
-        ###update_choice does not correctly evaluate the input <--still needs work.
         if update_choice.lower()=="yes" or update_choice.lower()=="y":
             update_current_version()
         else: 
