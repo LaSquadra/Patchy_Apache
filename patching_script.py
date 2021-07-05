@@ -1,10 +1,5 @@
 #! /usr/bin/python3
-import sys, subprocess, urllib.request
-from scapy.all import * 
-
-#code parts remaining:
-#optional: use argparse to get config file locations and IP addresses and such
-
+import sys, subprocess, urllib.request, argparse
 
 ###SSH into a machine
 def ssh_initiation():
@@ -63,40 +58,63 @@ def version_comparison(installed_apache_version,newest_apache_version):
 ###updates the current installed version to the current release version
 def update_current_version():
     backup_conf=subprocess.run(["sudo", "cp", "/etc/apache2/apache2.conf", "/etc/apache2/apache2-backup.conf"])
-    #create_update_repository=subprocess.run(["sudo","add-apt-repository","ppa:ondreja/apache2"])
     update_repository=subprocess.run(["sudo","apt-get","update"])
-    upgrading_serices=subprocess.run(["sudo","apt-get","upgrade"])
+    upgrading_serices=subprocess.run(["sudo","apt-get","upgrade","-y"])
     print("Updating has completed")
     return backup_conf
 
 ###applying patches to the Apache server
-def applying_patches(apache2_conf_file,restart_prompt):
+def applying_patches(apache2_conf_file):
     backup_conf=subprocess.run(["sudo","cp","/etc/apache2/apache2.conf", "/etc/apache2/apache2-backup.conf"])
     config_patch_text="ServerTokens Prod\nServerSignature Off\n\n<Directory /opt/apache2/apache2>\nOptions -Indexes\n</Directory>\n\nFileETag None\n\nTraceEnable off\n\nTimeout 60"
-    with open(sys.argv[1],"a+") as config_file:
+    with open(apache2_conf_file,"a+") as config_file:
         config_file.write(config_patch_text)
     print("Patch Applied")
-    if restart_prompt.lower()=="yes" or restart_prompt.lower()=="y":
-        restart_apache=subprocess.run(["sudo","systemctl","restart","apache2"],stdout=subprocess.PIPE,text=True)
-        print("Apache has been reset.")
+
+
+###restarting the Apache server        
+def restarting_apache_server():
+    restart_apache=subprocess.run(["sudo","systemctl","restart","apache2"],stdout=subprocess.PIPE,text=True)
+    print("Apache has been reset.")
 
 
 ###main control function
 if __name__=="__main__":
-    update_choice=input("Would you like to update to the current release version of Apache? (Y/n) ")
-    vuln_check_option=input("Would you like to check for Vulnerabilities? (Y/n) ")
-    if vuln_check_option.lower()=="yes" or vuln_check_option.lower()=="y":
-        web_server_url=input("What is the IP of the webserver you are trying to scan? ") 
-    patch_option=input("Would you like to apply the optional patches? (Y/n) ")
-    if patch_option.lower()=="yes" or patch_option.lower()=="y":
-        restart_prompt=input("Apache will need to be restarted for changes to take effect.\nRestart when completed? (Y/n) ")
-    print()
-    if version_comparison(check_current_version(), check_newest_version())==False:
-        if update_choice.lower()=="yes" or update_choice.lower()=="y":
-            update_current_version()
+###creating command line controls
+    ###creating the user options
+    parser=argparse.ArgumentParser()
+    parser.add_argument("-c","--compare_version",dest="version_comp",help="Compair installed version to newest in-release version",action="store_true")
+    parser.add_argument("-u","-update_version",dest="update_version",help="Updates installed version to in-release version",action="store_true")
+    parser.add_argument("-f","--file_location",type=str,dest="conf_file",help="Enter the path to the config file")
+    parser.add_argument("-s","--scan",type=str,dest="ip_address",help="Enter the IP address of the server")
+    parser.add_argument("-r","--restart",dest="restart_server",help="Restart Apache once patch has been applied.",action="store_true")
+    parser.add_argument("-p","--patch",dest="patch_config",help="Run the patching function. Requires [-f] and [-r] to be defined",action="store_true")
+    ###creating the variables for the program
+    version_comp=parser.parse_args().version_comp
+    update_version=parser.parse_args().update_version
+    conf_file=parser.parse_args().conf_file
+    ip_address=parser.parse_args().ip_address
+    restart_server=parser.parse_args().restart_server
+    patch_config=parser.parse_args().patch_config
+    args=parser.parse_args()
+    ###making "help" the default when no flags are given
+    if (version_comp is None) and (update_version is None) and (conf_file is None) and (ip_address is None) and (restart_server is None) and (patch_config is None):
+        print("Use -h for more info on using this program")
+        exit(0)
+
+###running the main program
+    if args.version_comp==True:
+        version_comparison(check_current_version(),check_newest_version())
         print()
-    if vuln_check_option.lower()=="yes" or vuln_check_option.lower()=="y":
-        vulnerability_check(web_server_url)
+    if args.update_version==True:
+        update_current_version()
         print()
-    if patch_option.lower()=="yes" or patch_option.lower()=="y":
-        applying_patches(sys.argv[1],restart_prompt)
+    if args.ip_address is not None:
+        vulnerability_check(ip_address)
+        print()
+    if (args.patch_config is not None) and (args.conf_file is not None):
+        applying_patches(conf_file)
+    if (args.patch_config is not None) and (args.conf_file is None):
+        print("You must specify the location of the config file [-f]")
+    if args.restart_server==True:
+        restarting_apache_server()
