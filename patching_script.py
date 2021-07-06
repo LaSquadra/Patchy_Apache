@@ -112,9 +112,9 @@ if __name__=="__main__":
     if args.ip_address is not None:
         vulnerability_check(ip_address)
         print()
-    if (args.patch_config is not None) and (args.conf_file is not None):
+    if (args.patch_config==True) and (args.conf_file is not None):
         applying_patches(conf_file)
-    if (args.patch_config is not None) and (args.conf_file is None):
+    if (args.patch_config==True) and (args.conf_file is None):
         print("You must specify the location of the config file [-f]")
     if args.restart_server==True:
         restarting_apache_server()
