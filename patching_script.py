@@ -1,10 +1,6 @@
 #! /usr/bin/python3
 import sys, subprocess, urllib.request, argparse
 
-###SSH into a machine
-def ssh_initiation():
-    print("SSH is still a work in progress")
-
 ###conducts a Nikto scan on the user-specified server
 def vulnerability_check(web_server_url):
     #print("This section checks the Apache web server for vulnerabilities.\n")
