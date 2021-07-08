@@ -3,10 +3,9 @@ import sys, subprocess, urllib.request, argparse
 
 ###conducts a Nikto scan on the user-specified server
 def vulnerability_check(web_server_url):
-    #print("This section checks the Apache web server for vulnerabilities.\n")
-    print("Note: This may take a few minutes.")
+    print("Note: This may take a few minutes.\n")
     nikto_scan=subprocess.run(["nikto","-h",web_server_url,"-Display","3","-ask","no"],stdout=subprocess.PIPE,text=True)
-    print("Scan Complete")
+    print("Scan Complete\n\n")
     useable_nikto_scan_result=""
     for text in nikto_scan.stdout:
         useable_nikto_scan_result+=text
