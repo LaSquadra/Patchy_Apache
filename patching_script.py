@@ -10,7 +10,7 @@ def vulnerability_check(web_server_url):
     for text in nikto_scan.stdout:
         useable_nikto_scan_result+=text
     print(useable_nikto_scan_result)
-    print("\n\nThe above results a potential vulnerabilities in your system and may be worth manualy looking into.\n")
+    print("\n\nNOTE: The above results are potential vulnerabilities in your system and may be worth manualy looking into.\n")
 
 
 ###executes the bash command "apache2 -v" and formats the response
@@ -64,7 +64,7 @@ def applying_patches(apache2_conf_file):
     config_patch_text="ServerTokens Prod\nServerSignature Off\n\n<Directory /opt/apache2/apache2>\nOptions -Indexes\n</Directory>\n\nFileETag None\n\nTraceEnable off\n\nTimeout 60"
     with open(apache2_conf_file,"a+") as config_file:
         config_file.write(config_patch_text)
-    print("Patch has been Applied")
+    print("Apache hardening patch has been Applied")
 
 
 ###restarting the Apache server        
