@@ -1,5 +1,5 @@
 #! /usr/bin/python3
-import sys, subprocess, urllib.request, argparse
+import subprocess, urllib.request, argparse
 
 ###conducts a Nikto scan on the user-specified server
 def vulnerability_check(web_server_url):
@@ -10,7 +10,7 @@ def vulnerability_check(web_server_url):
     for text in nikto_scan.stdout:
         useable_nikto_scan_result+=text
     print(useable_nikto_scan_result)
-    return useable_nikto_scan_result
+    print("\n\nThe above results a potential vulnerabilities in your system and may be worth manualy looking into.\n")
 
 
 ###executes the bash command "apache2 -v" and formats the response
@@ -56,7 +56,7 @@ def update_current_version():
     update_repository=subprocess.run(["sudo","apt-get","update"])
     upgrading_serices=subprocess.run(["sudo","apt-get","upgrade","-y"])
     print("Updating has completed")
-    return backup_conf
+    
 
 ###applying patches to the Apache server
 def applying_patches(apache2_conf_file):
