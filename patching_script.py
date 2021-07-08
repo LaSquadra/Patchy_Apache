@@ -65,7 +65,7 @@ def applying_patches(apache2_conf_file):
     config_patch_text="ServerTokens Prod\nServerSignature Off\n\n<Directory /opt/apache2/apache2>\nOptions -Indexes\n</Directory>\n\nFileETag None\n\nTraceEnable off\n\nTimeout 60"
     with open(apache2_conf_file,"a+") as config_file:
         config_file.write(config_patch_text)
-    print("Patch Applied")
+    print("Patch has been Applied")
 
 
 ###restarting the Apache server        
