@@ -2,6 +2,6 @@ Patchy_Apache:
 
 Project goal: Write a script that patches the vulnerabilities and demonstrate it in action.
 
-Basic concept -> given a known vulnerability, recreate the "apt" command to update the apache web server.
+Basic concept -> given a known vulnerability, develop a script that can patch it.
 
-Time allowing, develop other methods of patching that the user can choose from within the program. 
+Time allowing, implement more functionality and other methods of patching that the user can choose from within the program. 
